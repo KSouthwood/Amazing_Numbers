@@ -6,8 +6,10 @@ public class Main {
     public static void main(String[] args) {
         int number = readNumber();
         if (number > 0) {
+            System.out.printf("Properties of %d%n", number);
             evenOdd(number);
             buzz(number);
+            duck(number);
         } else {
             System.out.println("This number is not natural!");
         }
@@ -27,27 +29,17 @@ public class Main {
     }
 
     private static void evenOdd(int number) {
-        System.out.println(number % 2 == 0 ?
-                "This number is Even." :
-                "This number is Odd.");
+        System.out.println("Even: " + (number % 2 == 0));
+        System.out.println("Odd : " + (number % 2 == 1));
     }
 
+    
     private static void buzz(int number) {
-        String[] reasons = {"%d is neither divisible by 7 nor it ends with 7.",
-        "%d is divisible by 7.",
-        "%d ends with 7.",
-        "%d is divisible by 7 and it ends with 7."};
+        System.out.println("Buzz: " + (number % 7 == 0 || number % 10 == 7));
+    }
 
-        boolean divideBy7 = number % 7 == 0;
-        boolean endsWith7 = number % 10 == 7;
-
-        int reason = divideBy7 ? 1 : 0;
-        reason += endsWith7 ? 2 : 0;
-
-        System.out.println((divideBy7 || endsWith7) ?
-                "It is a Buzz number." :
-                "It is not a Buzz number.");
-        System.out.println("Explanation:");
-        System.out.printf(reasons[reason] + "%n", number);
+    private static void duck(int number) {
+        String num = String.valueOf(number);
+        System.out.println("Duck: " + num.contains("0"));
     }
 }
