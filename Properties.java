@@ -12,7 +12,9 @@ public class Properties {
                     "gapful",
                     "palindromic",
                     "spy",
-                    "duck"
+                    "duck",
+                    "sunny",
+                    "square"
             )
     );
 
@@ -48,6 +50,8 @@ public class Properties {
         System.out.println("       Duck: " + isDuck(number));
         System.out.println("Palindromic: " + isPalindromic(number));
         System.out.println("     Gapful: " + isGapful(number));
+        System.out.println("      Sunny: " + isSunny(number));
+        System.out.println("     Square: " + isSquare(number));
         System.out.println();
     }
 
@@ -86,6 +90,8 @@ public class Properties {
         output.append(isDuck(number) ? ", duck" : "");
         output.append(isGapful(number) ? ", gapful" : "");
         output.append(isPalindromic(number) ? ", palindromic" : "");
+        output.append(isSquare(number) ? ", square" : "");
+        output.append(isSunny(number) ? ", sunny" : "");
         return output.toString();
     }
 
@@ -134,5 +140,14 @@ public class Properties {
         }
 
         return sum == product;
+    }
+
+    private boolean isSquare(long number) {
+        Double root = Math.sqrt((double) number);
+        return number == root.longValue() * root.longValue();
+    }
+
+    private boolean isSunny(long number) {
+        return isSquare(number + 1);
     }
 }

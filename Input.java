@@ -30,6 +30,11 @@ public class Input {
                 continue;
             }
 
+            if (request.isBlank()) {
+                printInstructions();
+                continue;
+            }
+
             String[] params = request.split(" ", 3);
 
             if (validateRequest(params)) {
