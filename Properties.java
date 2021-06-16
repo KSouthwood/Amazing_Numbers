@@ -36,6 +36,7 @@ public class Properties {
                         Long.parseLong(request[1]));
                 break;
             case 3:
+            case 4:
                 numbersWithProperty(request);
                 break;
         }
@@ -65,11 +66,12 @@ public class Properties {
     private void numbersWithProperty(String[] request) {
         long startNum = Long.parseLong(request[0]);
         long count = Long.parseLong(request[1]);
-        String property = request[2];
+        String first = request[2];
+        String second = request.length == 4 ? request[3] : " ";
 
         do {
             String properties = numberProperties(startNum);
-            if (properties.contains(property)) {
+            if (properties.contains(first) && properties.contains(second)) {
                 System.out.println(properties);
                 count--;
             }
