@@ -14,7 +14,8 @@ public class Properties {
                     "spy",
                     "duck",
                     "sunny",
-                    "square"
+                    "square",
+                    "jumping"
             )
     );
 
@@ -53,6 +54,7 @@ public class Properties {
         System.out.println("     Gapful: " + isGapful(number));
         System.out.println("      Sunny: " + isSunny(number));
         System.out.println("     Square: " + isSquare(number));
+        System.out.println("    Jumping: " + isJumping(number));
         System.out.println();
     }
 
@@ -82,19 +84,18 @@ public class Properties {
     }
 
     private String numberProperties(long number) {
-        StringBuilder output = new StringBuilder();
-        output.append(String.format("%,d", number));
-        output.append(" is ");
-        output.append(isEven(number) ? "even" : "");
-        output.append(isOdd(number) ? "odd" : "");
-        output.append(isBuzz(number) ? ", buzz" : "");
-        output.append(isSpy(number) ? ", spy" : "");
-        output.append(isDuck(number) ? ", duck" : "");
-        output.append(isGapful(number) ? ", gapful" : "");
-        output.append(isPalindromic(number) ? ", palindromic" : "");
-        output.append(isSquare(number) ? ", square" : "");
-        output.append(isSunny(number) ? ", sunny" : "");
-        return output.toString();
+        return String.format("%,d", number) +
+                " is " +
+                (isEven(number) ? "even" : "") +
+                (isOdd(number) ? "odd" : "") +
+                (isBuzz(number) ? ", buzz" : "") +
+                (isSpy(number) ? ", spy" : "") +
+                (isDuck(number) ? ", duck" : "") +
+                (isGapful(number) ? ", gapful" : "") +
+                (isPalindromic(number) ? ", palindromic" : "") +
+                (isSquare(number) ? ", square" : "") +
+                (isSunny(number) ? ", sunny" : "") +
+                (isJumping(number) ? ", jumping" : "");
     }
 
     private boolean isEven(long number) {
@@ -145,11 +146,30 @@ public class Properties {
     }
 
     private boolean isSquare(long number) {
-        Double root = Math.sqrt((double) number);
-        return number == root.longValue() * root.longValue();
+        double root = Math.sqrt((double) number);
+        return number == Math.pow(Math.floor(root), 2.0);
     }
 
     private boolean isSunny(long number) {
         return isSquare(number + 1);
+    }
+
+    private boolean isJumping(long number) {
+        if (number < 10) {
+            return false;
+        }
+
+        long digit = number % 10;
+        number /= 10;
+        while (number > 0) {
+            long prev = digit;
+            digit = number % 10;
+            if (Math.abs(digit - prev) != 1) {
+                return false;
+            }
+            number /= 10;
+        }
+
+        return true;
     }
 }
