@@ -58,10 +58,14 @@ public class Properties {
     }
 
     private void propertiesOfList(long startNumber, long size) {
-        for (long number = startNumber; number < startNumber + size; number++) {
-            System.out.println(numberProperties(number));
+        if (startNumber == 0) {
+            System.out.println("Starting number cannot be 0. Please try again.\n");
+        } else {
+            for (long number = startNumber; number < startNumber + size; number++) {
+                System.out.println(numberProperties(number));
+            }
+            System.out.println();
         }
-        System.out.println();
     }
 
     private void numbersWithProperty(String[] request) {

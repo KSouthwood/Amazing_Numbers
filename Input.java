@@ -3,21 +3,25 @@ package numbers;
 import java.util.*;
 
 public class Input {
-    private static final Map<String, String> errorMsg = Map.of(
-            "natural1", "The first parameter should be a natural number or zero.\n",
-            "natural2", "The second parameter should be a natural number.\n",
-            "one_property", "The property %s is wrong.\nAvailable properties: %s\n\n",
-            "two_properties", "The properties %s are wrong.\nAvailable properties: %s\n\n",
-            "exclusive", "The request contains mutually exclusive properties: [%s, %s]\n" +
-                    "There are no numbers with these properties.\n\n",
-            "same_properties",
-            "WARNING: The property/properties %s was/were typed more than once.\n\n"
-    );
+    enum Errors {
+        NATURAL_1 ("The first parameter should be a natural number or zero.\n"),
+        NATURAL_2 ("The second parameter should be a natural number.\n"),
+        PROPERTY ("The property %s is wrong.\nAvailable properties: %s\n\n"),
+        PROPERTIES ("The properties %s are wrong.\nAvailable properties: %s\n\n"),
+        EXCLUSIVE ("The request contains mutually exclusive properties: [%s, %s]\n" +
+                "There are no numbers with these properties.\n\n"),
+        DUPLICATE ("WARNING: The property/properties %s was/were typed more than once.\n\n");
 
-    private final Map<String, String> patterns = Map.of(
-            "natural", "\\d+",
-            "property", "\\w+"
-    );
+        private final String message;
+
+        Errors(String s) {
+            message = s;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
 
     Properties properties = new Properties();
 
@@ -65,14 +69,14 @@ public class Input {
      * @return true if the number(s) are natural
      */
     private boolean validateNumbers(String[] params) {
-        if (!params[0].matches(patterns.get("natural"))) {
-            printError("natural1");
+        if (!params[0].matches("\\d+")) {
+            printError(Errors.NATURAL_1);
             return false;
         }
 
         if (params.length > 1) {
-            if (!params[1].matches(patterns.get("natural"))) {
-                printError("natural2");
+            if (!params[1].matches("\\d+")) {
+                printError(Errors.NATURAL_2);
                 return false;
             }
         }
@@ -104,14 +108,14 @@ public class Input {
         }
 
         if (!invalid.isEmpty()) {
-            printError(invalid.size() == 1 ? "one_property" : "two_properties",
+            printError(invalid.size() == 1 ? Errors.PROPERTY : Errors.PROPERTIES,
                     invalid.toString(),
                     properties.getProperties());
             return false;
         }
 
         if (!duplicates.isEmpty()) {
-            printError("same_properties", duplicates.toString(), properties.getProperties());
+            printError(Errors.DUPLICATE, duplicates.toString(), properties.getProperties());
         }
 
         return isNotMutuallyExclusive(included.toString());
@@ -133,7 +137,7 @@ public class Input {
 
         for (String[] set : exclusives) {
             if (properties.contains(set[0]) && properties.contains(set[1])) {
-                printError("exclusive", set[0], set[1]);
+                printError(Errors.EXCLUSIVE, set[0], set[1]);
                 return false;
             }
         }
@@ -154,24 +158,15 @@ public class Input {
         System.out.println();
     }
 
-    private static void printError(String message) {
-        System.out.println(errorMsg.get(message));
+    private static void printError(Errors message) {
+        System.out.println(message.getMessage());
     }
 
-    private static void printError(String message, String first, String second) {
+    private static void printError(Errors message, String first, String second) {
         System.out.printf(
-                errorMsg.get(message),
+                message.getMessage(),
                 first.toUpperCase(),
                 second.toUpperCase()
-        );
-    }
-
-    private static void printError(String message, String first, String second, String third) {
-        System.out.printf(
-                errorMsg.get(message),
-                first.toUpperCase(),
-                second.toUpperCase(),
-                third.toUpperCase()
         );
     }
 }
