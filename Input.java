@@ -132,7 +132,8 @@ public class Input {
         String[][] exclusives = {
                 {"even", "odd"},
                 {"duck", "spy"},
-                {"sunny", "square"}
+                {"sunny", "square"},
+                {"happy", "sad"}
         };
 
         for (String[] set : exclusives) {
@@ -158,13 +159,13 @@ public class Input {
         System.out.println();
     }
 
-    private static void printError(Errors message) {
-        System.out.println(message.getMessage());
+    private static void printError(Errors error) {
+        System.out.println(error.getMessage());
     }
 
-    private static void printError(Errors message, String first, String second) {
+    private static void printError(Errors error, String first, String second) {
         System.out.printf(
-                message.getMessage(),
+                error.getMessage(),
                 first.toUpperCase(),
                 second.toUpperCase()
         );

@@ -1,7 +1,9 @@
 package numbers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Properties {
     private final List<String> properties = new ArrayList<>(
@@ -15,7 +17,9 @@ public class Properties {
                     "duck",
                     "sunny",
                     "square",
-                    "jumping"
+                    "jumping",
+                    "happy",
+                    "sad"
             )
     );
 
@@ -44,16 +48,20 @@ public class Properties {
 
     private void propertiesOfNumber(long number) {
         System.out.printf("Properties of %,d%n", number);
-        System.out.println("       Even: " + isEven(number));
-        System.out.println("        Odd: " + isOdd(number));
-        System.out.println("        Spy: " + isSpy(number));
-        System.out.println("       Buzz: " + isBuzz(number));
-        System.out.println("       Duck: " + isDuck(number));
-        System.out.println("Palindromic: " + isPalindromic(number));
-        System.out.println("     Gapful: " + isGapful(number));
-        System.out.println("      Sunny: " + isSunny(number));
-        System.out.println("     Square: " + isSquare(number));
-        System.out.println("    Jumping: " + isJumping(number));
+        String format = "%12s: %b\n";
+        System.out.printf(format, "Even", isEven(number));
+        System.out.printf(format, "Odd", isOdd(number));
+        System.out.printf(format, "Spy", isSpy(number));
+        System.out.printf(format, "Buzz", isBuzz(number));
+        System.out.printf(format, "Duck", isDuck(number));
+        System.out.printf(format, "Palindromic", isPalindromic(number));
+        System.out.printf(format, "Gapful", isGapful(number));
+        System.out.printf(format, "Sunny", isSunny(number));
+        System.out.printf(format, "Square", isSquare(number));
+        System.out.printf(format, "Jumping", isJumping(number));
+        boolean happy = isHappy(number);
+        System.out.printf(format, "Happy", happy);
+        System.out.printf(format, "Sad", !happy);
         System.out.println();
     }
 
@@ -100,8 +108,7 @@ public class Properties {
     private String numberProperties(long number) {
         return String.format("%,d", number) +
                 " is " +
-                (isEven(number) ? "even" : "") +
-                (isOdd(number) ? "odd" : "") +
+                (isEven(number) ? "even" : "odd") +
                 (isBuzz(number) ? ", buzz" : "") +
                 (isSpy(number) ? ", spy" : "") +
                 (isDuck(number) ? ", duck" : "") +
@@ -109,7 +116,8 @@ public class Properties {
                 (isPalindromic(number) ? ", palindromic" : "") +
                 (isSquare(number) ? ", square" : "") +
                 (isSunny(number) ? ", sunny" : "") +
-                (isJumping(number) ? ", jumping" : "");
+                (isJumping(number) ? ", jumping" : "") +
+                (isHappy(number) ? ", happy" : ", sad");
     }
 
     private boolean isEven(long number) {
@@ -185,5 +193,24 @@ public class Properties {
         }
 
         return true;
+    }
+
+    private boolean isHappy(long number) {
+        Set<Long> numbers = new HashSet<>();
+        numbers.add(number);
+        long result;
+        long num = number;
+
+        do {
+            result = 0;
+            do {
+                long digit = num % 10;
+                result += digit * digit;
+                num /= 10;
+            } while (num > 0);
+            num = result;
+        } while (result != 1 && numbers.add(result));
+
+        return result == 1;
     }
 }
