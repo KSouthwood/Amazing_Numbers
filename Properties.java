@@ -36,8 +36,7 @@ public class Properties {
                 propertiesOfList(Long.parseLong(request[0]),
                         Long.parseLong(request[1]));
                 break;
-            case 3:
-            case 4:
+            default:
                 numbersWithProperty(request);
                 break;
         }
@@ -68,12 +67,13 @@ public class Properties {
     private void numbersWithProperty(String[] request) {
         long startNum = Long.parseLong(request[0]);
         long count = Long.parseLong(request[1]);
-        String first = request[2];
-        String second = request.length == 4 ? request[3] : " ";
+
+        String[] props = new String[request.length - 2];
+        System.arraycopy(request, 2, props, 0, request.length - 2);
 
         do {
             String properties = numberProperties(startNum);
-            if (properties.contains(first) && properties.contains(second)) {
+            if (containsProperty(props, properties)) {
                 System.out.println(properties);
                 count--;
             }
@@ -81,6 +81,16 @@ public class Properties {
         } while (count > 0);
 
         System.out.println();
+    }
+
+    private static boolean containsProperty(String[] props, String properties) {
+        for (String property : props) {
+            if (!properties.contains(property)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private String numberProperties(long number) {
@@ -156,7 +166,7 @@ public class Properties {
 
     private boolean isJumping(long number) {
         if (number < 10) {
-            return false;
+            return true;
         }
 
         long digit = number % 10;

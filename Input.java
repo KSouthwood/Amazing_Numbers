@@ -1,7 +1,9 @@
 package numbers;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Input {
     private static final Map<String, String> errorMsg = Map.of(
@@ -41,7 +43,7 @@ public class Input {
                 continue;
             }
 
-            String[] params = request.split(" ", 4);
+            String[] params = request.split(" ");
 
             if (validateRequest(params)) {
                 properties.processRequest(params);
@@ -60,7 +62,7 @@ public class Input {
                 return validateNumbers(params) &&
                         validateTwoProperties(params[2], params[3]);
             default:
-                return false;
+                return validateNumbers(params) && validateMultipleProperties(params);
         }
     }
 
@@ -124,7 +126,7 @@ public class Input {
 
         // check that both properties are valid
         if (property1 && property2) {
-            return isNotMutuallyExclusive(first, second);
+            return isNotMutuallyExclusive(first + " " + second);
         }
 
         // one or both of the properties is/are not valid, determine which one
@@ -146,21 +148,47 @@ public class Input {
     }
 
     /**
+     * <p>Validate several properties to ensure they're all valid, not mutually exclusive, and
+     * we have no duplicates.</p>
+     * @param params the array of parameters input by the user
+     * @return true if all properties are valid
+     */
+    private boolean validateMultipleProperties(String[] params) {
+        Set<String> propertySet = new HashSet<>();
+        // populate set with the properties we want to check for validating them at the same time
+        for (int index = 2; index < params.length; index++) {
+            // duplicate property check - add() is false if we're adding a property again
+            if (!propertySet.add(params[index])) {
+                printError("same_properties", params[index], params[index], properties.getProperties());
+                return false;
+            }
+            // valid property check
+            if (!properties.hasProperty(params[index])) {
+                printError("one_property", params[index], properties.getProperties());
+                return false;
+            }
+        }
+
+        return isNotMutuallyExclusive(propertySet.toString());
+    }
+
+    /**
      * <p>Makes sure the properties are not mutually exclusive.</p>
      * <p>Calling method ensures both properties are different and valid.</p>
      *
-     * @param first  property one
-     * @param second property two
+     * @param properties String of properties to be checked
      * @return true if the properties are NOT mutually exclusive
      */
-    private boolean isNotMutuallyExclusive(String first, String second) {
-        String[] exclusives = {
-                "even odd", "duck spy", "sunny square"
+    private boolean isNotMutuallyExclusive(String properties) {
+        String[][] exclusives = {
+                {"even", "odd"},
+                {"duck", "spy"},
+                {"sunny", "square"}
         };
 
-        for (String exclusive : exclusives) {
-            if (exclusive.contains(first) && exclusive.contains(second)) {
-                printError("exclusive", first, second);
+        for (String[] set : exclusives) {
+            if (properties.contains(set[0]) && properties.contains(set[1])) {
+                printError("exclusive", set[0], set[1]);
                 return false;
             }
         }
