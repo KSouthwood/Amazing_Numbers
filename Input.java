@@ -92,18 +92,26 @@ public class Input {
      */
     private boolean validateProperties(List<String> params) {
         Set<String> included = new HashSet<>();
+        Set<String> excluded = new HashSet<>();
         Set<String> invalid = new HashSet<>();
         Set<String> duplicates = new HashSet<>();
 
         // populate set with the properties we want to check for validating them at the same time
         for (String property : params) {
-            // duplicate property check - add() is false if we're adding a property again
-            if (!included.add(property)) {
-                duplicates.add(property);
-            }
             // valid property check
             if (!properties.hasProperty(property)) {
                 invalid.add(property);
+            }
+
+            // duplicate property check - add() is false if we're adding a property again
+            if (property.startsWith("-")) {
+                if (!excluded.add(property)) {
+                    duplicates.add(property);
+                }
+            } else {
+                if (!included.add(property)) {
+                    duplicates.add(property);
+                }
             }
         }
 
@@ -118,27 +126,40 @@ public class Input {
             printError(Errors.DUPLICATE, duplicates.toString(), properties.getProperties());
         }
 
-        return isNotMutuallyExclusive(included.toString());
+        return isNotMutuallyExclusive(included, excluded);
     }
 
     /**
      * <p>Makes sure the properties are not mutually exclusive.</p>
-     * <p>Calling method ensures both properties are different and valid.</p>
+     * <p>Calling method ensures both sets contain different and
+     * valid properties.</p>
      *
-     * @param properties String of properties to be checked
+     * @param inclusion Set of inclusive properties to be checked
+     * @param exclusion Set of exclusive properties to be checked
      * @return true if the properties are NOT mutually exclusive
      */
-    private boolean isNotMutuallyExclusive(String properties) {
+    private boolean isNotMutuallyExclusive(Set<String> inclusion, Set<String> exclusion) {
         String[][] exclusives = {
-                {"even", "odd"},
+                {"even", "odd"}, {"-even", "-odd"},
                 {"duck", "spy"},
                 {"sunny", "square"},
-                {"happy", "sad"}
+                {"happy", "sad"}, {"-happy", "-sad"}
         };
 
+        Set<String> allProperties = new HashSet<>();
+        allProperties.addAll(inclusion);
+        allProperties.addAll(exclusion);
+
         for (String[] set : exclusives) {
-            if (properties.contains(set[0]) && properties.contains(set[1])) {
+            if (allProperties.contains(set[0]) && allProperties.contains(set[1])) {
                 printError(Errors.EXCLUSIVE, set[0], set[1]);
+                return false;
+            }
+        }
+
+        for (String property : exclusion) {
+            if (inclusion.contains(property.substring(1))) {
+                printError(Errors.EXCLUSIVE, property.substring(1), property);
                 return false;
             }
         }
@@ -152,8 +173,8 @@ public class Input {
         System.out.println("- enter two natural numbers to obtain the properties of the list:");
         System.out.println("  * the first parameter represents a starting number;");
         System.out.println("  * the second parameter shows how many consecutive numbers are to be printed;");
-        System.out.println("- two natural numbers and a property to search for;");
-        System.out.println("- two natural numbers and two properties to search for;");
+        System.out.println("- two natural numbers and properties to search for;");
+        System.out.println("- a property preceded by minus must bot be present in numbers;");
         System.out.println("- separate the parameters with one space;");
         System.out.println("- enter 0 to exit.");
         System.out.println();

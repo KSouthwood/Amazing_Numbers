@@ -27,8 +27,17 @@ public class Properties {
         return properties.toString();
     }
 
+    /**
+     * <p>Checks if the supplied property is valid or not.</p>
+     * <p>We handle the property regardless of if it begins with a hyphen ("-")
+     * or not.</p>
+     * @param property property to check for
+     * @return true if in our list of properties
+     */
     boolean hasProperty(String property) {
-        return properties.contains(property);
+        return property.startsWith("-") ?
+                properties.contains(property.substring(1)) :
+                properties.contains(property);
     }
 
     void processRequest(String[] request) {
@@ -95,10 +104,27 @@ public class Properties {
         System.out.println();
     }
 
+    /**
+     * <p>Checks the properties of a number.</p>
+     * <p>Given a string array of properties that a number should or should not
+     * have, check that each property either is (for a property that should be
+     * included) or is not (for a property that should not be included) in the
+     * properties of a number.</p>
+     * @param props the properties that should/should not be listed
+     * @param properties the properties of a particular number
+     * @return true if the number has the properties to be included, and does
+     * not have the properties that should be excluded
+     */
     private static boolean containsProperty(String[] props, String properties) {
         for (String property : props) {
-            if (!properties.contains(property)) {
-                return false;
+            if (property.startsWith("-")) {
+                if (properties.contains(property.substring(1))) {
+                    return false;
+                }
+            } else {
+                if (!properties.contains(property)) {
+                    return false;
+                }
             }
         }
 
@@ -128,19 +154,44 @@ public class Properties {
         return (number % 2 == 1);
     }
 
+    /**
+     * <p>Buzz numbers are either divisible by 7 or end in 7.</p>
+     * @param number number to check
+     * @return true if number qualifies as a buzz number
+     */
     private boolean isBuzz(long number) {
         return (number % 7 == 0 || number % 10 == 7);
     }
 
+    /**
+     * <p>Duck numbers contain the digit zero (0).</p>
+     * <p>Duck numbers are mutually exclusive from Spy numbers for inclusion on
+     * a list, however, both can be specified for exclusion.</p>
+     * @param number number to check
+     * @return true if number qualifies as a duck number
+     */
     private boolean isDuck(long number) {
         return String.valueOf(number).contains("0");
     }
 
+    /**
+     * <p>Palindromic numbers read the same left to right as they do
+     * right to left.</p>
+     * @param number number to check
+     * @return true if number qualifies as palindromic
+     */
     private boolean isPalindromic(long number) {
         return String.valueOf(number)
                 .equals(new StringBuilder().append(number).reverse().toString());
     }
 
+    /**
+     * <p>Gapful numbers contain at least three digits and are evenly divisible
+     * by the number formed from their first and last digits.</p>
+     * <p>By definition, they are greater than or equal to 100.</p>
+     * @param number number to check
+     * @return true if number qualifies as gapful
+     */
     private boolean isGapful(long number) {
         if (number >= 100) {
             String numberString = String.valueOf(number);
@@ -152,6 +203,19 @@ public class Properties {
         return false;
     }
 
+    /**
+     * <p>Numbers are spy if the sum of their digits is equal to the product of
+     * their digits. By definition, any number lower than 10 is spy.</p>
+     * <p>i.e. 1,214 is spy because the sum of the digits is 8
+     * <code>(1 + 2 + 1 + 4)</code> and the product is also 8
+     * <code>(1 * 2 * 1 * 4)</code>.</p>
+     * <p>A spy number is mutually exclusive from duck numbers since the product
+     * of a duck number is always going to be 0, hence it'd always fail the
+     * test for being spy. However, both can be excluded as a property without
+     * problem.</p>
+     * @param number number to check
+     * @return true if number qualifies as spy
+     */
     private boolean isSpy(long number) {
         long num = number;
         long sum = 0;
@@ -167,15 +231,41 @@ public class Properties {
         return sum == product;
     }
 
+    /**
+     * <p>Square numbers are the square of an integer - an integer raised to the
+     * second power. <code>(n<sup>2</sup>)</code></p>
+     * <p>Square numbers are mutually exclusive from sunny numbers, but both can
+     * be specified as an a property to exclude in a list.</p>
+     * @param number number to check
+     * @return true if number qualifies as square
+     */
     private boolean isSquare(long number) {
         double root = Math.sqrt((double) number);
         return number == Math.pow(Math.floor(root), 2.0);
     }
 
+    /**
+     * <p>Sunny numbers are one less than a square number.</p>
+     * <p>i.e. <code>N + 1</code> is a square number. (63 is sunny since
+     * <code>63 + 1 = 64</code> which is equal to <code>8 * 8</code>.</p>
+     * <p>Sunny numbers are mutually exclusive from square numbers by definition
+     * (being one less than a square), but both can be specified as a property
+     * to exclude in a list.</p>
+     * @param number number to check
+     * @return true if number qualifies as sunny
+     */
     private boolean isSunny(long number) {
         return isSquare(number + 1);
     }
 
+    /**
+     * <p>Jumping numbers have consecutive digits which differ by one (1).</p>
+     * <p>The difference between 9 and 0 is not considered as one. Single digit
+     * numbers are considered jumping.</p>
+     * <p>i.e. <code>78987</code> is jumping, while <code>78986</code> is not.</p>
+     * @param number number to check
+     * @return true if number qualifies as jumping
+     */
     private boolean isJumping(long number) {
         if (number < 10) {
             return true;
@@ -195,6 +285,15 @@ public class Properties {
         return true;
     }
 
+    /**
+     * <p>Happy numbers reach 1 after a sequence of adding the squares of each
+     * digit. If a number is not Happy, it is Sad.</p>
+     * <p>i.e. <code>13</code> is a happy number as <code>1<sup>2</sup> +
+     * 3<sup>2</sup> = 10</code> which leads to <code>1<sup>2</sup> +
+     * 0<sup>2</sup> = 1</code>.</p>
+     * @param number number to check
+     * @return true if number qualifies as happy
+     */
     private boolean isHappy(long number) {
         Set<Long> numbers = new HashSet<>();
         numbers.add(number);
